@@ -36,7 +36,12 @@ The terminal version uses numeric feedback:
 - `1` = yellow
 - `0` = gray
 
-Example:
+### Video Demo
+- A demonstration of how Wordle Helper runs as a web app
+[Watch the Wordle demo video][Video Demo](https://drive.google.com/file/d/1S-bxxOCHegbZ_wa3ujuNFo4mPDOB27R-/view?usp=sharing)
 
+Example:
 ```txt
 22222
+
+
