@@ -1,8 +1,8 @@
+#include <cmath>
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <unordered_map>
-#include <cmath>
 
 #include "bstset.h"
 #include "include/worldle.h"
@@ -14,8 +14,16 @@ using namespace std;
  * returns a set that contains all the words in the file.
  */
 BSTSet<string> load_words(const string& filename) {
-  // TODO_STUDENT
-  return BSTSet<string>{};
+  BSTSet<string> words;
+
+  ifstream infile(filename);
+  string word;
+
+  while (infile >> word) {
+    words.insert(word);
+  }
+
+  return words;
 }
 
 /**
@@ -33,8 +41,35 @@ BSTSet<string> load_words(const string& filename) {
  * - `get_pattern("MERRY", "CORER") == "01210"`
  */
 string get_pattern(const string& guess, const string& winning_word) {
-  // TODO_STUDENT
-  return "";
+  string pattern = "00000";
+
+  bool guess_used[5] = {false, false, false, false, false};
+  bool win_used[5] = {false, false, false, false, false};
+
+  // First pass: mark greens
+  for (int i = 0; i < 5; i++) {
+    if (guess[i] == winning_word[i]) {
+      pattern[i] = '2';
+      guess_used[i] = true;
+      win_used[i] = true;
+    }
+  }
+
+  // Second pass: mark yellows
+  for (int i = 0; i < 5; i++) {
+    if (!guess_used[i]) {
+      for (int j = 0; j < 5; j++) {
+        if (!win_used[j] && guess[i] == winning_word[j]) {
+          pattern[i] = '1';
+          guess_used[i] = true;
+          win_used[j] = true;
+          break;
+        }
+      }
+    }
+  }
+
+  return pattern;
 }
 
 /**
@@ -49,13 +84,22 @@ string get_pattern(const string& guess, const string& winning_word) {
  *
  * In this case, the `feedback` says that the word should have an 'S' (not in
  * the middle position), therefore we filter out "TONIC". It also says that it
- * doesn't have an 'A' nor a 'B', so we filter out "BASIC". Given the
+ * doesn't have an 'A' nor an 'B', so we filter out "BASIC". Given the
  * `feedback`, "STOIC" and "SONIC" are still possible winning words that
  * remain in `remaining_words`.
  */
 void filter_words(BSTSet<string>& remaining_words, const string& guess,
                   const string& feedback) {
-  // TODO_STUDENT
+  BSTSet<string> copy = remaining_words;
+
+  copy.begin();
+
+  string word;
+  while (copy.next(word)) {
+    if (get_pattern(guess, word) != feedback) {
+      remaining_words.erase(word);
+    }
+  }
 }
 
 /**
@@ -63,13 +107,26 @@ void filter_words(BSTSet<string>& remaining_words, const string& guess,
  * the word that maximizes the entropy.
  */
 string recommend(BSTSet<string>& remaining_words) {
-  // TODO_STUDENT
-  return "";
+  remaining_words.begin();
+
+  string best_word = "";
+  string word;
+
+  double best_entropy = -1.0;
+
+  while (remaining_words.next(word)) {
+    double curr_entropy = entropy(word, remaining_words);
+
+    if (curr_entropy > best_entropy) {
+      best_entropy = curr_entropy;
+      best_word = word;
+    }
+  }
+
+  return best_word;
 }
 
-
-//###############################################################################
-
+// ###############################################################################
 
 /**
  * Computes the entropy of a candidate `guess`, given the
@@ -107,7 +164,7 @@ double entropy(const string& guess, const BSTSet<string>& remaining_words) {
  * they got from playing a Wordle word in a Wordle game engine.
  *
  * Will stop once the user notifies that they won the Wordle game.
- * 
+ *
  * This implementation will be given to the students.
  */
 void recommender(BSTSet<string>& remaining_words) {

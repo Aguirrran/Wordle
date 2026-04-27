@@ -5,7 +5,11 @@
 #include <stdexcept>
 #include <string>
 #include <utility>
-
+// make clean
+//   make test_wordle
+// make run_server
+//
+//
 using namespace std;
 
 template <typename T>
@@ -33,7 +37,7 @@ class BSTSet {
   BSTNode* curr;
   // TODO_STUDENT: add private helper function definitions here
 
-  void insert_helper(BSTNode*& curr, BSTNode* parent, int value) {
+  void insert_helper(BSTNode*& curr, BSTNode* parent, T value) {
     if (curr == nullptr) {
       curr = new BSTNode(value, parent);
       sz++;
@@ -48,7 +52,7 @@ class BSTSet {
       }
     }
   }
-  bool contains_helper(BSTNode* curr, int value) const {
+  bool contains_helper(BSTNode* curr, T value) const {
     if (curr == nullptr) {
       return false;
     }
@@ -112,7 +116,7 @@ class BSTSet {
     return remove_min_helper(curr->left);
   }
 
-  T erase_helper(BSTNode*& curr, int targetValue) {
+  T erase_helper(BSTNode*& curr, T targetValue) {
     if (curr == nullptr) {
       throw(out_of_range("There is no node with this value!"));
     }
